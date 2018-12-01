@@ -22,11 +22,8 @@ hal_txbf_8812a_set_ndpa_rate(
 
 }
 
-void
-hal_txbf_jaguar_rf_mode(
-	void			*p_dm_void,
-	struct _RT_BEAMFORMING_INFO	*p_beam_info
-)
+static void hal_txbf_jaguar_rf_mode(void *p_dm_void,
+				    struct _RT_BEAMFORMING_INFO *p_beam_info)
 {
 	struct PHY_DM_STRUCT	*p_dm_odm = (struct PHY_DM_STRUCT *)p_dm_void;
 
@@ -68,11 +65,7 @@ hal_txbf_jaguar_rf_mode(
 }
 
 
-void
-hal_txbf_jaguar_download_ndpa(
-	void			*p_dm_void,
-	u8				idx
-)
+static void hal_txbf_jaguar_download_ndpa(void *p_dm_void, u8 idx)
 {
 	struct PHY_DM_STRUCT	*p_dm_odm = (struct PHY_DM_STRUCT *)p_dm_void;
 	u8			u1b_tmp = 0, tmp_reg422 = 0, head_page;
@@ -159,10 +152,7 @@ hal_txbf_jaguar_download_ndpa(
 }
 
 
-void
-hal_txbf_jaguar_fw_txbf_cmd(
-	void			*p_dm_void
-)
+static void hal_txbf_jaguar_fw_txbf_cmd(void *p_dm_void)
 {
 	struct PHY_DM_STRUCT	*p_dm_odm = (struct PHY_DM_STRUCT *)p_dm_void;
 	u8	idx, period0 = 0, period1 = 0;

@@ -348,103 +348,54 @@ struct ieee_ibss_seq {
 #if defined(PLATFORM_LINUX) || defined(CONFIG_RTL8711FW) || defined(PLATFORM_FREEBSD)
 
 struct rtw_ieee80211_hdr {
-	u16 frame_ctl;
-	u16 duration_id;
+	__le16 frame_ctl;
+	__le16 duration_id;
 	u8 addr1[ETH_ALEN];
 	u8 addr2[ETH_ALEN];
 	u8 addr3[ETH_ALEN];
-	u16 seq_ctl;
+	__le16 seq_ctl;
 	u8 addr4[ETH_ALEN];
 } __attribute__((packed));
 
 struct rtw_ieee80211_hdr_3addr {
-	u16 frame_ctl;
-	u16 duration_id;
+	__le16 frame_ctl;
+	__le16 duration_id;
 	u8 addr1[ETH_ALEN];
 	u8 addr2[ETH_ALEN];
 	u8 addr3[ETH_ALEN];
-	u16 seq_ctl;
+	__le16 seq_ctl;
 } __attribute__((packed));
 
-
 struct rtw_ieee80211_hdr_qos {
-	u16 frame_ctl;
-	u16 duration_id;
+	__le16 frame_ctl;
+	__le16 duration_id;
 	u8 addr1[ETH_ALEN];
 	u8 addr2[ETH_ALEN];
 	u8 addr3[ETH_ALEN];
-	u16 seq_ctl;
+	__le16 seq_ctl;
 	u8 addr4[ETH_ALEN];
-	u16	qc;
+	__le16	qc;
 }  __attribute__((packed));
 
 struct rtw_ieee80211_hdr_3addr_qos {
-	u16 frame_ctl;
-	u16 duration_id;
+	__le16 frame_ctl;
+	__le16 duration_id;
 	u8 addr1[ETH_ALEN];
 	u8 addr2[ETH_ALEN];
 	u8 addr3[ETH_ALEN];
-	u16 seq_ctl;
-	u16     qc;
+	__le16 seq_ctl;
+	__le16     qc;
 }  __attribute__((packed));
 
 struct eapol {
 	u8 snap[6];
-	u16 ethertype;
+	__le16 ethertype;
 	u8 version;
 	u8 type;
-	u16 length;
+	__le16 length;
 } __attribute__((packed));
 
 #endif
-
-
-
-#ifdef PLATFORM_WINDOWS
-
-#pragma pack(1)
-struct rtw_ieee80211_hdr {
-	u16 frame_ctl;
-	u16 duration_id;
-	u8 addr1[ETH_ALEN];
-	u8 addr2[ETH_ALEN];
-	u8 addr3[ETH_ALEN];
-	u16 seq_ctl;
-	u8 addr4[ETH_ALEN];
-};
-
-struct rtw_ieee80211_hdr_3addr {
-	u16 frame_ctl;
-	u16 duration_id;
-	u8 addr1[ETH_ALEN];
-	u8 addr2[ETH_ALEN];
-	u8 addr3[ETH_ALEN];
-	u16 seq_ctl;
-};
-
-
-struct rtw_ieee80211_hdr_qos {
-	struct rtw_ieee80211_hdr wlan_hdr;
-	u16	qc;
-};
-
-struct rtw_ieee80211_hdr_3addr_qos {
-	struct  rtw_ieee80211_hdr_3addr wlan_hdr;
-	u16     qc;
-};
-
-struct eapol {
-	u8 snap[6];
-	u16 ethertype;
-	u8 version;
-	u8 type;
-	u16 length;
-};
-#pragma pack()
-
-#endif
-
-
 
 enum eap_type {
 	EAP_PACKET = 0,
@@ -1121,7 +1072,7 @@ struct ieee80211_security {
 	u8 key_sizes[WEP_KEYS];
 	u8 keys[WEP_KEYS][WEP_KEY_LEN];
 	u8 level;
-	u16 flags;
+	__le16 flags;
 } __attribute__((packed));
 
 #endif
@@ -1160,12 +1111,12 @@ Total: 28-2340 bytes
 */
 
 struct ieee80211_header_data {
-	u16 frame_ctl;
-	u16 duration_id;
+	__le16 frame_ctl;
+	__le16 duration_id;
 	u8 addr1[6];
 	u8 addr2[6];
 	u8 addr3[6];
-	u16 seq_ctrl;
+	__le16 seq_ctrl;
 };
 
 #define BEACON_PROBE_SSID_ID_POSITION 12
@@ -1433,7 +1384,7 @@ enum ieee80211_state {
 #define IP_FMT "%d.%d.%d.%d"
 #define IP_ARG(x) ((u8 *)(x))[0], ((u8 *)(x))[1], ((u8 *)(x))[2], ((u8 *)(x))[3]
 #define PORT_FMT "%u"
-#define PORT_ARG(x) ntohs(*((u16 *)(x)))
+#define PORT_ARG(x) ntohs(*((__be16 *)(x)))
 
 #ifdef PLATFORM_FREEBSD /* Baron change func to macro */
 #define is_multicast_mac_addr(Addr) ((((Addr[0]) & 0x01) == 0x01) && ((Addr[0]) != 0xff))

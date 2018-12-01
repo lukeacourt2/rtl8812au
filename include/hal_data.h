@@ -1082,10 +1082,33 @@ int rtw_halmac_deinit_adapter(struct dvobj_priv *);
 #define rf_mode_table_data0	RF_ModeTableData0
 #define rf_mode_table_data1	RF_ModeTableData1
 
-
-
-
-
+extern unsigned char RTW_WPA_OUI[];
+extern unsigned char WPA_TKIP_CIPHER[4];
+extern unsigned char RSN_TKIP_CIPHER[4];
+extern int new_bcn_max;
+extern unsigned char REALTEK_96B_IE[];
+extern char *rtw_initmac;
+#ifdef CONFIG_80211N_HT
+extern int rtw_ht_enable;
+#endif
+#ifdef CONFIG_TX_MCAST2UNI
+extern int rtw_mc2u_disable;
+#endif
+#ifdef CONFIG_80211N_HT
+extern int rtw_bw_mode;
+extern int rtw_ampdu_enable;/* for enable tx_ampdu */
+#endif
+#ifdef CONFIG_GLOBAL_UI_PID
+extern int ui_pid[3];
+#endif
+int nat25_db_handle(_adapter *priv, struct sk_buff *skb, int method);
+void dhcp_flag_bcast(_adapter *priv, struct sk_buff *skb);
+void *scdb_findEntry(_adapter *priv, unsigned char *macAddr, unsigned char *ipAddr);
+int nat25_handle_frame(_adapter *priv, struct sk_buff *skb);
+void netdev_br_init(struct net_device *netdev);
+void indicate_wx_scan_complete_event(_adapter *padapter);
+void rtw_indicate_wx_assoc_event(_adapter *padapter);
+void rtw_indicate_wx_disassoc_event(_adapter *padapter);
 
 #define RX_SMOOTH_FACTOR	Rx_Smooth_Factor
 

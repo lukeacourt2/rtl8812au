@@ -28,14 +28,14 @@
 #endif
 
 
-bool test_st_match_rule(_adapter *adapter, u8 *local_naddr, u8 *local_port, u8 *remote_naddr, u8 *remote_port)
+static bool test_st_match_rule(_adapter *adapter, u8 *local_naddr, u8 *local_port, u8 *remote_naddr, u8 *remote_port)
 {
-	if (ntohs(*((u16 *)local_port)) == 5001 || ntohs(*((u16 *)remote_port)) == 5001)
+	if (ntohs(*((__be16 *)local_port)) == 5001 || ntohs(*((__be16 *)remote_port)) == 5001)
 		return _TRUE;
 	return _FALSE;
 }
 
-struct st_register test_st_reg = {
+static struct st_register test_st_reg = {
 	.s_proto = 0x06,
 	.rule = test_st_match_rule,
 };
@@ -462,18 +462,13 @@ struct	sta_info *rtw_alloc_stainfo(struct	sta_priv *pstapriv, u8 *hwaddr)
 
 	pfree_sta_queue = &pstapriv->free_sta_queue;
 
-	/* _enter_critical_bh(&(pfree_sta_queue->lock), &irqL); */
 	_enter_critical_bh(&(pstapriv->sta_hash_lock), &irqL2);
 	if (_rtw_queue_empty(pfree_sta_queue) == _TRUE) {
-		/* _exit_critical_bh(&(pfree_sta_queue->lock), &irqL); */
-		_exit_critical_bh(&(pstapriv->sta_hash_lock), &irqL2);
 		psta = NULL;
 	} else {
 		psta = LIST_CONTAINOR(get_next(&pfree_sta_queue->queue), struct sta_info, list);
 
 		rtw_list_delete(&(psta->list));
-
-		/* _exit_critical_bh(&(pfree_sta_queue->lock), &irqL); */
 
 		tmp_aid = psta->aid;
 
@@ -492,13 +487,9 @@ struct	sta_info *rtw_alloc_stainfo(struct	sta_priv *pstapriv, u8 *hwaddr)
 		}
 		phash_list = &(pstapriv->sta_hash[index]);
 
-		/* _enter_critical_bh(&(pstapriv->sta_hash_lock), &irqL2); */
-
 		rtw_list_insert_tail(&psta->hash_list, phash_list);
 
 		pstapriv->asoc_sta_count++;
-
-		/* _exit_critical_bh(&(pstapriv->sta_hash_lock), &irqL2); */
 
 		/* Commented by Albert 2009/08/13
 		 * For the SMC router, the sequence number of first packet of WPS handshake will be 0.
@@ -507,7 +498,6 @@ struct	sta_info *rtw_alloc_stainfo(struct	sta_priv *pstapriv, u8 *hwaddr)
 
 		for (i = 0; i < 16; i++)
 			_rtw_memcpy(&psta->sta_recvpriv.rxcache.tid_rxseq[i], &wRxSeqInitialValue, 2);
-
 
 		init_addba_retry_timer(pstapriv->padapter, psta);
 #ifdef CONFIG_IEEE80211W
@@ -540,7 +530,6 @@ struct	sta_info *rtw_alloc_stainfo(struct	sta_priv *pstapriv, u8 *hwaddr)
 			rtw_init_recv_timer(preorder_ctrl);
 		}
 
-
 		/* init for DM */
 		psta->rssi_stat.undecorated_smoothed_pwdb = (-1);
 		psta->rssi_stat.undecorated_smoothed_cck = (-1);
@@ -552,13 +541,10 @@ struct	sta_info *rtw_alloc_stainfo(struct	sta_priv *pstapriv, u8 *hwaddr)
 		psta->ra_rpt_linked = _FALSE;
 
 		rtw_alloc_macid(pstapriv->padapter, psta);
-
 	}
 
 exit:
-
 	_exit_critical_bh(&(pstapriv->sta_hash_lock), &irqL2);
-
 
 	if (psta)
 		rtw_mi_update_iface_status(&(pstapriv->padapter->mlmepriv), 0);

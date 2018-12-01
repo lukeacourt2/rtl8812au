@@ -2588,7 +2588,7 @@ void rtw_hal_set_bssid(_adapter *adapter, u8 *val)
 	RTW_INFO("%s "ADPT_FMT"- hw port -%d BSSID: "MAC_FMT"\n", __func__, ADPT_ARG(adapter), adapter->hw_port, MAC_ARG(val));
 }
 
-void rtw_hal_get_msr(_adapter *adapter, u8 *net_type)
+static void rtw_hal_get_msr(_adapter *adapter, u8 *net_type)
 {
 	switch (adapter->hw_port) {
 	case HW_PORT0:
@@ -3186,7 +3186,7 @@ inline s32 rtw_hal_set_FwMediaStatusRpt_range_cmd(_adapter *adapter, bool opmode
 	return rtw_hal_set_FwMediaStatusRpt_cmd(adapter, opmode, miracast, miracast_sink, role, macid, 1, macid_end);
 }
 
-void rtw_hal_set_FwRsvdPage_cmd(PADAPTER padapter, PRSVDPAGE_LOC rsvdpageloc)
+static void rtw_hal_set_FwRsvdPage_cmd(PADAPTER padapter, PRSVDPAGE_LOC rsvdpageloc)
 {
 	struct	hal_ops *pHalFunc = &padapter->hal_func;
 	u8	u1H2CRsvdPageParm[H2C_RSVDPAGE_LOC_LEN] = {0};
@@ -3282,7 +3282,7 @@ void rtw_hal_set_output_gpio(_adapter *padapter, u8 index, u8 outputval)
 }
 #endif
 
-void rtw_hal_set_FwAoacRsvdPage_cmd(PADAPTER padapter, PRSVDPAGE_LOC rsvdpageloc)
+static void rtw_hal_set_FwAoacRsvdPage_cmd(PADAPTER padapter, PRSVDPAGE_LOC rsvdpageloc)
 {
 	struct	hal_ops *pHalFunc = &padapter->hal_func;
 	struct	pwrctrl_priv *pwrpriv = adapter_to_pwrctl(padapter);
@@ -5920,7 +5920,7 @@ void rtw_hal_construct_NullFunctionData(
 	*pLength = pktlen;
 }
 
-void rtw_hal_construct_ProbeRsp(_adapter *padapter, u8 *pframe, u32 *pLength,
+static void rtw_hal_construct_ProbeRsp(_adapter *padapter, u8 *pframe, u32 *pLength,
 				u8 *StaAddr, BOOLEAN bHideSSID)
 {
 	struct rtw_ieee80211_hdr	*pwlanhdr;
@@ -8619,7 +8619,7 @@ SetHalDefVar(_adapter *adapter, HAL_DEF_VARIABLE variable, void *value)
 }
 
 #ifdef CONFIG_BEAMFORMING
-u8 rtw_hal_query_txbfer_rf_num(_adapter *adapter)
+static u8 rtw_hal_query_txbfer_rf_num(_adapter *adapter)
 {
 	struct registry_priv	*pregistrypriv = &adapter->registrypriv;
 	HAL_DATA_TYPE *hal_data = GET_HAL_DATA(adapter);
@@ -8638,7 +8638,8 @@ u8 rtw_hal_query_txbfer_rf_num(_adapter *adapter)
 		return 1;
 
 }
-u8 rtw_hal_query_txbfee_rf_num(_adapter *adapter)
+
+static u8 rtw_hal_query_txbfee_rf_num(_adapter *adapter)
 {
 	struct registry_priv		*pregistrypriv = &adapter->registrypriv;
 	struct mlme_ext_priv	*pmlmeext = &adapter->mlmeextpriv;
@@ -9893,7 +9894,7 @@ bool kfree_data_is_bb_gain_empty(struct kfree_data_t *data)
 }
 
 #ifdef CONFIG_USB_RX_AGGREGATION
-void rtw_set_usb_agg_by_mode_normal(_adapter *padapter, u8 cur_wireless_mode)
+static void rtw_set_usb_agg_by_mode_normal(_adapter *padapter, u8 cur_wireless_mode)
 {
 	HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(padapter);
 	if (cur_wireless_mode < WIRELESS_11_24N
@@ -9961,7 +9962,7 @@ void rtw_set_usb_agg_by_mode_normal(_adapter *padapter, u8 cur_wireless_mode)
 	}
 }
 
-void rtw_set_usb_agg_by_mode_customer(_adapter *padapter, u8 cur_wireless_mode, u8 UsbDmaSize, u8 Legacy_UsbDmaSize)
+static void rtw_set_usb_agg_by_mode_customer(_adapter *padapter, u8 cur_wireless_mode, u8 UsbDmaSize, u8 Legacy_UsbDmaSize)
 {
 	HAL_DATA_TYPE	*pHalData = GET_HAL_DATA(padapter);
 
@@ -9988,7 +9989,7 @@ void rtw_set_usb_agg_by_mode_customer(_adapter *padapter, u8 cur_wireless_mode, 
 	}
 }
 
-void rtw_set_usb_agg_by_mode(_adapter *padapter, u8 cur_wireless_mode)
+static void rtw_set_usb_agg_by_mode(_adapter *padapter, u8 cur_wireless_mode)
 {
 #ifdef CONFIG_PLATFORM_NOVATEK_NT72668
 	rtw_set_usb_agg_by_mode_customer(padapter, cur_wireless_mode, 0x3, 0x3);
@@ -11162,7 +11163,7 @@ void rtw_dump_phy_cap_by_phydmapi(void *sel, _adapter *adapter)
 	#endif
 }
 #else
-void rtw_dump_phy_cap_by_hal(void *sel, _adapter *adapter)
+static void rtw_dump_phy_cap_by_hal(void *sel, _adapter *adapter)
 {
 	u8 phy_cap = _FALSE;
 

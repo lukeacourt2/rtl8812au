@@ -364,15 +364,8 @@ odm_acquire_spin_lock(
 	enum rt_spinlock_type	type
 )
 {
-#if (DM_ODM_SUPPORT_TYPE & (ODM_AP))
-
-#elif (DM_ODM_SUPPORT_TYPE & ODM_CE)
 	struct _ADAPTER *adapter = p_dm_odm->adapter;
 	rtw_odm_acquirespinlock(adapter, type);
-#elif (DM_ODM_SUPPORT_TYPE & ODM_WIN)
-	struct _ADAPTER		*adapter = p_dm_odm->adapter;
-	PlatformAcquireSpinLock(adapter, type);
-#endif
 }
 void
 odm_release_spin_lock(

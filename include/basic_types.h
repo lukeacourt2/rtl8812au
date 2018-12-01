@@ -107,45 +107,6 @@
 #endif
 
 
-#ifdef PLATFORM_FREEBSD
-
-	typedef signed char s8;
-	typedef unsigned char u8;
-
-	typedef signed short s16;
-	typedef unsigned short u16;
-
-	typedef signed int s32;
-	typedef unsigned int u32;
-
-	typedef unsigned int	uint;
-	typedef	signed int		sint;
-	typedef long atomic_t;
-
-	typedef signed long long s64;
-	typedef unsigned long long u64;
-	#define IN
-	#define OUT
-	#define NDIS_OID uint
-	#define NDIS_STATUS uint
-
-	typedef u32 dma_addr_t;
-	#define UCHAR u8
-	#define USHORT u16
-	#define UINT u32
-	#define ULONG u32
-
-	typedef void (*proc_t)(void *);
-
-	typedef unsigned int __kernel_size_t;
-	typedef int __kernel_ssize_t;
-
-	typedef	__kernel_size_t	SIZE_T;
-	typedef	__kernel_ssize_t	SSIZE_T;
-	#define FIELD_OFFSET(s, field)	((SSIZE_T)&((s *)(0))->field)
-
-#endif
-
 #define MEM_ALIGNMENT_OFFSET	(sizeof (SIZE_T))
 #define MEM_ALIGNMENT_PADDING	(sizeof(SIZE_T) - 1)
 
@@ -162,7 +123,7 @@
 */
 #define BIT_LEN_MASK_32(__BitLen) ((u32)(0xFFFFFFFF >> (32 - (__BitLen))))
 #define BIT_LEN_MASK_16(__BitLen) ((u16)(0xFFFF >> (16 - (__BitLen))))
-#define BIT_LEN_MASK_8(__BitLen) ((u8)(0xFF >> (8 - (__BitLen))))
+#define BIT_LEN_MASK_8(__BitLen) ((0xFF >> (8 - (__BitLen))))
 
 /*
 * Continuous bits starting from least significant bit
@@ -184,43 +145,43 @@
 /*
 * Read LE data from memory to host byte order
 */
-#define ReadLE4Byte(_ptr)	le32_to_cpu(*((u32 *)(_ptr)))
-#define ReadLE2Byte(_ptr)	le16_to_cpu(*((u16 *)(_ptr)))
+#define ReadLE4Byte(_ptr)	le32_to_cpu(*((__le32 *)(_ptr)))
+#define ReadLE2Byte(_ptr)	le16_to_cpu(*((__le16 *)(_ptr)))
 #define ReadLE1Byte(_ptr)	(*((u8 *)(_ptr)))
 
 /*
 * Read BE data from memory to host byte order
 */
-#define ReadBEE4Byte(_ptr)	be32_to_cpu(*((u32 *)(_ptr)))
-#define ReadBE2Byte(_ptr)	be16_to_cpu(*((u16 *)(_ptr)))
+#define ReadBEE4Byte(_ptr)	be32_to_cpu(*((__be32 *)(_ptr)))
+#define ReadBE2Byte(_ptr)	be16_to_cpu(*((__be16 *)(_ptr)))
 #define ReadBE1Byte(_ptr)	(*((u8 *)(_ptr)))
 
 /*
 * Write host byte order data to memory in LE order
 */
-#define WriteLE4Byte(_ptr, _val)	((*((u32 *)(_ptr))) = cpu_to_le32(_val))
-#define WriteLE2Byte(_ptr, _val)	((*((u16 *)(_ptr))) = cpu_to_le16(_val))
+#define WriteLE4Byte(_ptr, _val)	((*((__le32 *)(_ptr))) = cpu_to_le32(_val))
+#define WriteLE2Byte(_ptr, _val)	((*((__le16 *)(_ptr))) = cpu_to_le16(_val))
 #define WriteLE1Byte(_ptr, _val)	((*((u8 *)(_ptr))) = ((u8)(_val)))
 
 /*
 * Write host byte order data to memory in BE order
 */
-#define WriteBE4Byte(_ptr, _val)	((*((u32 *)(_ptr))) = cpu_to_be32(_val))
-#define WriteBE2Byte(_ptr, _val)	((*((u16 *)(_ptr))) = cpu_to_be16(_val))
+#define WriteBE4Byte(_ptr, _val)	((*((__be32 *)(_ptr))) = cpu_to_be32(_val))
+#define WriteBE2Byte(_ptr, _val)	((*((__be16 *)(_ptr))) = cpu_to_be16(_val))
 #define WriteBE1Byte(_ptr, _val)	((*((u8 *)(_ptr))) = ((u8)(_val)))
 
 /*
 * Return 4-byte value in host byte ordering from 4-byte pointer in litten-endian system.
 */
-#define LE_P4BYTE_TO_HOST_4BYTE(__pStart) (le32_to_cpu(*((u32 *)(__pStart))))
-#define LE_P2BYTE_TO_HOST_2BYTE(__pStart) (le16_to_cpu(*((u16 *)(__pStart))))
+#define LE_P4BYTE_TO_HOST_4BYTE(__pStart) (le32_to_cpu(*((__le32 *)(__pStart))))
+#define LE_P2BYTE_TO_HOST_2BYTE(__pStart) (le16_to_cpu(*((__le16 *)(__pStart))))
 #define LE_P1BYTE_TO_HOST_1BYTE(__pStart) ((*((u8 *)(__pStart))))
 
 /*
 * Return 4-byte value in host byte ordering from 4-byte pointer in big-endian system.
 */
-#define BE_P4BYTE_TO_HOST_4BYTE(__pStart) (be32_to_cpu(*((u32 *)(__pStart))))
-#define BE_P2BYTE_TO_HOST_2BYTE(__pStart) (be16_to_cpu(*((u16 *)(__pStart))))
+#define BE_P4BYTE_TO_HOST_4BYTE(__pStart) (be32_to_cpu(*((__be32 *)(__pStart))))
+#define BE_P2BYTE_TO_HOST_2BYTE(__pStart) (be16_to_cpu(*((__be16 *)(__pStart))))
 #define BE_P1BYTE_TO_HOST_1BYTE(__pStart) ((*((u8 *)(__pStart))))
 
 /*

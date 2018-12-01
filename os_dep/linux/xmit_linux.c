@@ -20,6 +20,7 @@
 #define _XMIT_OSDEP_C_
 
 #include <drv_types.h>
+#include <hal_data.h>
 
 #define DBG_DUMP_OS_QUEUE_CTL 0
 
@@ -355,7 +356,7 @@ void rtw_os_wake_queue_at_free_stainfo(_adapter *padapter, int *qcnt_freed)
 }
 
 #ifdef CONFIG_TX_MCAST2UNI
-int rtw_mlcst2unicst(_adapter *padapter, struct sk_buff *skb)
+static int rtw_mlcst2unicst(_adapter *padapter, struct sk_buff *skb)
 {
 	struct	sta_priv *pstapriv = &padapter->stapriv;
 	struct xmit_priv *pxmitpriv = &padapter->xmitpriv;
@@ -439,7 +440,6 @@ int _rtw_xmit_entry(_pkt *pkt, _nic_hdl pnetdev)
 	struct xmit_priv *pxmitpriv = &padapter->xmitpriv;
 #ifdef CONFIG_TX_MCAST2UNI
 	struct mlme_priv	*pmlmepriv = &padapter->mlmepriv;
-	extern int rtw_mc2u_disable;
 #endif /* CONFIG_TX_MCAST2UNI	 */
 	s32 res = 0;
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 35))

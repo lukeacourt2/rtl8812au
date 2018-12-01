@@ -24,7 +24,7 @@
 
 #ifdef CONFIG_80211AC_VHT
 /*				20/40/80,	ShortGI,	MCS Rate  */
-const u16 VHT_MCS_DATA_RATE[3][2][30] = {
+static const u16 VHT_MCS_DATA_RATE[3][2][30] = {
 	{	{
 			13, 26, 39, 52, 78, 104, 117, 130, 156, 156,
 			26, 52, 78, 104, 156, 208, 234, 260, 312, 312,

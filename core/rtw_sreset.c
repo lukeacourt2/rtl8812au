@@ -107,7 +107,7 @@ bool sreset_inprogress(_adapter *padapter)
 #endif
 }
 
-void sreset_restore_security_station(_adapter *padapter)
+static void sreset_restore_security_station(_adapter *padapter)
 {
 	u8 EntryId = 0;
 	struct mlme_priv *mlmepriv = &padapter->mlmepriv;
@@ -144,7 +144,7 @@ void sreset_restore_security_station(_adapter *padapter)
 	}
 }
 
-void sreset_restore_network_station(_adapter *padapter)
+static void sreset_restore_network_station(_adapter *padapter)
 {
 	struct mlme_priv *mlmepriv = &padapter->mlmepriv;
 	struct mlme_ext_priv	*pmlmeext = &padapter->mlmeextpriv;
@@ -192,13 +192,12 @@ void sreset_restore_network_station(_adapter *padapter)
 
 	mlmeext_joinbss_event_callback(padapter, 1);
 	/* restore Sequence No. */
-	rtw_hal_set_hwreg(padapter, HW_VAR_RESTORE_HW_SEQ, 0);
+	rtw_hal_set_hwreg(padapter, HW_VAR_RESTORE_HW_SEQ, NULL);
 
 	sreset_restore_security_station(padapter);
 }
 
-
-void sreset_restore_network_status(_adapter *padapter)
+static void sreset_restore_network_status(_adapter *padapter)
 {
 	struct mlme_priv *mlmepriv = &padapter->mlmepriv;
 	struct mlme_ext_priv	*pmlmeext = &padapter->mlmeextpriv;

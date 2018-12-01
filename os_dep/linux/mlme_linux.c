@@ -22,7 +22,7 @@
 #define _MLME_OSDEP_C_
 
 #include <drv_types.h>
-
+#include <hal_data.h>
 
 #ifdef RTK_DMP_PLATFORM
 void Linkup_workitem_callback(struct work_struct *work)
@@ -128,9 +128,9 @@ void _dynamic_check_timer_handler(struct timer_list *t)
 
 #ifdef CONFIG_SET_SCAN_DENY_TIMER
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 15, 0)
-void _rtw_set_scan_deny_timer_hdl(void *FunctionContext)
+static void _rtw_set_scan_deny_timer_hdl(void *FunctionContext)
 #else
-void _rtw_set_scan_deny_timer_hdl(struct timer_list *t)
+static void _rtw_set_scan_deny_timer_hdl(struct timer_list *t)
 #endif
 {
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 15, 0)
@@ -181,9 +181,6 @@ void rtw_init_mlme_timer(_adapter *padapter)
 
 }
 
-extern void rtw_indicate_wx_assoc_event(_adapter *padapter);
-extern void rtw_indicate_wx_disassoc_event(_adapter *padapter);
-
 void rtw_os_indicate_connect(_adapter *adapter)
 {
 	struct mlme_priv *pmlmepriv = &(adapter->mlmepriv);
@@ -209,7 +206,6 @@ void rtw_os_indicate_connect(_adapter *adapter)
 
 }
 
-extern void indicate_wx_scan_complete_event(_adapter *padapter);
 void rtw_os_indicate_scan_done(_adapter *padapter, bool aborted)
 {
 #ifdef CONFIG_IOCTL_CFG80211
@@ -350,9 +346,9 @@ void rtw_report_sec_ie(_adapter *adapter, u8 authmode, u8 *sec_ie)
 }
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 15, 0)
-void _survey_timer_hdl(void *FunctionContext)
+static void _survey_timer_hdl(void *FunctionContext)
 #else
-void _survey_timer_hdl(struct timer_list *t)
+static void _survey_timer_hdl(struct timer_list *t)
 #endif
 {
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 15, 0)
@@ -365,9 +361,9 @@ void _survey_timer_hdl(struct timer_list *t)
 }
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 15, 0)
-void _link_timer_hdl(void *FunctionContext)
+static void _link_timer_hdl(void *FunctionContext)
 #else
-void _link_timer_hdl(struct timer_list *t)
+static void _link_timer_hdl(struct timer_list *t)
 #endif
 {
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 15, 0)
@@ -412,9 +408,9 @@ void _ft_roam_timer_hdl(struct timer_list *t);
 #endif
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 15, 0)
-void _addba_timer_hdl(void *FunctionContext)
+static void _addba_timer_hdl(void *FunctionContext)
 #else
-void _addba_timer_hdl(struct timer_list *t)
+static void _addba_timer_hdl(struct timer_list *t)
 #endif
 {
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 15, 0)

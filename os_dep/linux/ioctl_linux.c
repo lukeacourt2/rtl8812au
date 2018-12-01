@@ -26,26 +26,18 @@
 #ifdef RTW_HALMAC
 #include "../../hal/hal_halmac.h"
 #endif
+#include <hal_data.h>
 
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 27))
 #define  iwe_stream_add_event(a, b, c, d, e)  iwe_stream_add_event(b, c, d, e)
 #define  iwe_stream_add_point(a, b, c, d, e)  iwe_stream_add_point(b, c, d, e)
 #endif
 
-#ifdef CONFIG_80211N_HT
-extern int rtw_ht_enable;
-#endif
-
-
 #define RTL_IOCTL_WPA_SUPPLICANT	(SIOCIWFIRSTPRIV+30)
 
 #define SCAN_ITEM_SIZE 768
 #define MAX_CUSTOM_LEN 64
 #define RATE_COUNT 4
-
-#ifdef CONFIG_GLOBAL_UI_PID
-extern int ui_pid[3];
-#endif
 
 /* combo scan */
 #define WEXT_CSCAN_AMOUNT 9
@@ -66,7 +58,7 @@ extern u8 str_2char2num(u8 hch, u8 lch);
 extern void macstr2num(u8 *dst, u8 *src);
 extern u8 convert_ip_addr(u8 hch, u8 mch, u8 lch);
 
-u32 rtw_rates[] = {1000000, 2000000, 5500000, 11000000,
+static u32 rtw_rates[] = {1000000, 2000000, 5500000, 11000000,
 	6000000, 9000000, 12000000, 18000000, 24000000, 36000000, 48000000, 54000000};
 
 static const char *const iw_operation_mode[] = {
@@ -515,8 +507,8 @@ static inline char *iwe_stream_rate_process(_adapter *padapter,
 		ht_cap = _TRUE;
 		pht_capie = (struct rtw_ieee80211_ht_cap *)(p + 2);
 		_rtw_memcpy(&mcs_rate , pht_capie->supp_mcs_set, 2);
-		bw_40MHz = (pht_capie->cap_info & IEEE80211_HT_CAP_SUP_WIDTH) ? 1 : 0;
-		short_GI = (pht_capie->cap_info & (IEEE80211_HT_CAP_SGI_20 | IEEE80211_HT_CAP_SGI_40)) ? 1 : 0;
+		bw_40MHz = (le16_to_cpu(pht_capie->cap_info) & IEEE80211_HT_CAP_SUP_WIDTH) ? 1 : 0;
+		short_GI = (le16_to_cpu(pht_capie->cap_info) & (IEEE80211_HT_CAP_SGI_20 | IEEE80211_HT_CAP_SGI_40)) ? 1 : 0;
 	}
 
 #ifdef CONFIG_80211AC_VHT
@@ -812,6 +804,8 @@ static char *translate_scan(_adapter *padapter,
 {
 	struct iw_event iwe;
 	u16 cap = 0;
+	__le16 le_tmp;
+
 	_rtw_memset(&iwe, 0, sizeof(iwe));
 
 	if (_FALSE == search_p2p_wfd_ie(padapter, info, pnetwork, start, stop))
@@ -823,8 +817,8 @@ static char *translate_scan(_adapter *padapter,
 	if (pnetwork->network.Reserved[0] == 2) /* Probe Request */
 		cap = 0;
 	else {
-		_rtw_memcpy((u8 *)&cap, rtw_get_capability_from_ie(pnetwork->network.IEs), 2);
-		cap = le16_to_cpu(cap);
+		_rtw_memcpy((u8 *)&le_tmp, rtw_get_capability_from_ie(pnetwork->network.IEs), 2);
+		cap = le16_to_cpu(le_tmp);
 	}
 
 	start = iwe_stream_mode_process(padapter, info, pnetwork, start, stop, &iwe, cap);
@@ -1937,17 +1931,14 @@ static int rtw_wx_set_mlme(struct net_device *dev,
 	_adapter *padapter = (_adapter *)rtw_netdev_priv(dev);
 	struct iw_mlme *mlme = (struct iw_mlme *) extra;
 
-
 	if (mlme == NULL)
 		return -1;
 
 	RTW_INFO("%s\n", __FUNCTION__);
 
-	reason = cpu_to_le16(mlme->reason_code);
-
+	reason = le16_to_cpu(mlme->reason_code);
 
 	RTW_INFO("%s, cmd=%d, reason=%d\n", __FUNCTION__, mlme->cmd, reason);
-
 
 	switch (mlme->cmd) {
 	case IW_MLME_DEAUTH:
@@ -3537,7 +3528,7 @@ static void rtw_dbg_mode_hdl(_adapter *padapter, u32 id, u8 *pdata, u32 len)
 		break;
 	case GEN_MP_IOCTL_SUBCODE(TRIGGER_GPIO):
 		RTW_INFO("==> trigger gpio 0\n");
-		rtw_hal_set_hwreg(padapter, HW_VAR_TRIGGER_GPIO_0, 0);
+		rtw_hal_set_hwreg(padapter, HW_VAR_TRIGGER_GPIO_0, NULL);
 		break;
 #ifdef CONFIG_BT_COEXIST
 	case GEN_MP_IOCTL_SUBCODE(SET_DM_BT):
@@ -4296,14 +4287,15 @@ static int rtw_p2p_get_wps_configmethod(struct net_device *dev,
 		if (_rtw_memcmp(pnetwork->network.MacAddress, peerMAC, ETH_ALEN)) {
 			u8 *wpsie;
 			uint	wpsie_len = 0;
+			__be16 be_tmp;
 
 			/*	The mac address is matched. */
 
 			wpsie = rtw_get_wps_ie_from_scan_queue(&pnetwork->network.IEs[0], pnetwork->network.IELength, NULL, &wpsie_len, pnetwork->network.Reserved[0]);
 			if (wpsie) {
-				rtw_get_wps_attr_content(wpsie, wpsie_len, WPS_ATTR_CONF_METHOD, (u8 *)&attr_content, &attr_contentlen);
+				rtw_get_wps_attr_content(wpsie, wpsie_len, WPS_ATTR_CONF_METHOD, (u8 *)&be_tmp, &attr_contentlen);
 				if (attr_contentlen) {
-					attr_content = be16_to_cpu(attr_content);
+					attr_content = be16_to_cpu(be_tmp);
 					sprintf(attr_content_str, "\n\nM=%.4d", attr_content);
 					blnMatch = 1;
 				}
@@ -4522,9 +4514,10 @@ static int rtw_p2p_get_device_type(struct net_device *dev,
 				rtw_get_wps_attr_content(wpsie, wpsie_len, WPS_ATTR_PRIMARY_DEV_TYPE, dev_type, &dev_type_len);
 				if (dev_type_len) {
 					u16	type = 0;
+					__be16 be_tmp;
 
-					_rtw_memcpy(&type, dev_type, 2);
-					type = be16_to_cpu(type);
+					_rtw_memcpy(&be_tmp, dev_type, 2);
+					type = be16_to_cpu(be_tmp);
 					sprintf(dev_type_str, "\n\nN=%.2d", type);
 					blnMatch = 1;
 				}
@@ -6185,6 +6178,8 @@ static int rtw_dbg_port(struct net_device *dev,
 		}
 			break;
 		#endif /* CONFIG_IOL */
+		default:
+			break;
 		}
 		break;
 	case 0x79: {
@@ -8462,7 +8457,7 @@ static int rtw_mp_efuse_get(struct net_device *dev,
 	struct pwrctrl_priv *pwrctrlpriv ;
 	u8 *data = NULL;
 	u8 *rawdata = NULL;
-	char *pch, *ptmp, *token, *tmp[3] = {0x00, 0x00, 0x00};
+	char *pch, *ptmp, *token, *tmp[3] = {NULL, NULL, NULL};
 	u16 i = 0, j = 0, mapLen = 0, addr = 0, cnts = 0;
 	u16 max_available_len = 0, raw_cursize = 0, raw_maxsize = 0;
 	u16 mask_len;
@@ -9109,7 +9104,7 @@ static int rtw_mp_efuse_set(struct net_device *dev,
 	u8 *ShadowMapBT = NULL;
 	u8 *ShadowMapWiFi = NULL;
 	u8 *setrawdata = NULL;
-	char *pch, *ptmp, *token, *tmp[3] = {0x00, 0x00, 0x00};
+	char *pch, *ptmp, *token, *tmp[3] = {NULL, NULL, NULL};
 	u16 addr = 0xFF, cnts = 0, BTStatus = 0 , max_available_len = 0;
 	u16 wifimaplen;
 	int err;

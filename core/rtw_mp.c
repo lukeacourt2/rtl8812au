@@ -350,7 +350,7 @@ static void PHY_SetRFPathSwitch_default(
 }
 
 
-void mpt_InitHWConfig(PADAPTER Adapter)
+static void mpt_InitHWConfig(PADAPTER Adapter)
 {
 	if (IS_HARDWARE_TYPE_8723B(Adapter)) {
 		/* TODO: <20130114, Kordan> The following setting is only for DPDT and Fixed board type. */
@@ -1154,7 +1154,7 @@ int SetTxPower(PADAPTER pAdapter)
 	return _TRUE;
 }
 
-void SetTxAGCOffset(PADAPTER pAdapter, u32 ulTxAGCOffset)
+static void SetTxAGCOffset(PADAPTER pAdapter, u32 ulTxAGCOffset)
 {
 	u32 TxAGCOffset_B, TxAGCOffset_C, TxAGCOffset_D, tmpAGC;
 
@@ -1446,7 +1446,7 @@ void fill_tx_desc_8814a(PADAPTER padapter)
 #endif
 
 #if defined(CONFIG_RTL8812A) || defined(CONFIG_RTL8821A)
-void fill_tx_desc_8812a(PADAPTER padapter)
+static void fill_tx_desc_8812a(PADAPTER padapter)
 {
 	struct mp_priv *pmp_priv = &padapter->mppriv;
 	u8 *pDesc   = (u8 *)&(pmp_priv->tx.desc);
