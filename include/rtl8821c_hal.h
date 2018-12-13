@@ -48,12 +48,8 @@
 
 	#ifndef MAX_RECVBUF_SZ
 		#ifndef CONFIG_MINIMAL_MEMORY_USAGE
-			#ifdef CONFIG_PLATFORM_MSTAR
-				#define MAX_RECVBUF_SZ (8192 + RX_FIFO_EXPANDING) /* 8K */
-			#else
-				/* 8821C - RX FIFO :16K ,for RX agg DMA mode = 16K, Rx agg USB mode could large than 16k*/
-				#define MAX_RECVBUF_SZ		(HALMAC_RX_FIFO_SIZE_8821C + RX_FIFO_EXPANDING)
-			#endif
+			/* 8821C - RX FIFO :16K ,for RX agg DMA mode = 16K, Rx agg USB mode could large than 16k*/
+			#define MAX_RECVBUF_SZ		(HALMAC_RX_FIFO_SIZE_8821C + RX_FIFO_EXPANDING)
 			/*#define MAX_RECVBUF_SZ_8821C (24576)*/ /* 24k*/
 			/*#define MAX_RECVBUF_SZ_8821C (20480)*/ /*20K*/
 			/*#define MAX_RECVBUF_SZ_8821C (10240) */ /*10K*/
